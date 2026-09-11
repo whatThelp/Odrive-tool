@@ -1,5 +1,6 @@
 # ODrive 上位机 ODrive Host Controller GUI
 
+[![Release](https://img.shields.io/github/v/release/whatThelp/Odrive-tool)](https://github.com/whatThelp/Odrive-tool/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue.svg)](https://www.python.org/)
 [![Firmware](https://img.shields.io/badge/ODrive%20FW-v0.5.x%20%7C%20v0.6.x-orange.svg)](https://docs.odriverobotics.com/)
@@ -10,6 +11,10 @@
 
 兼容固件 **v0.5.x 与 v0.6.x**，自动适配 **24V (12–24V)** 与 **56V (12–56V)** 电源版本。
 **无硬件也能完整体验**——内置设备模拟器，含物理仿真与故障注入。
+
+**直接下载可执行程序** → [Releases 最新版](https://github.com/whatThelp/Odrive-tool/releases/latest)（Windows x64，解压即用）
+
+**或克隆源码**：
 
 ```bash
 git clone https://github.com/whatThelp/Odrive-tool.git
@@ -33,21 +38,21 @@ git clone https://github.com/whatThelp/Odrive-tool.git
 
 ### 方式一：独立应用程序（终端用户，双击即用）
 
-**无需安装 Python 或 Node.js**，解压后双击即可运行，程序会在服务就绪后自动打开浏览器。
+**无需安装 Python 或 Node.js。** 从 [Releases 页面](https://github.com/whatThelp/Odrive-tool/releases/latest)
+下载，两种产物按需取用：
 
-根目录提供两个双击启动脚本（自动挑选可用的程序，并先清理残留实例）：
-
-| 文件 | 作用 |
-|---|---|
-| `启动ODrive上位机.bat` | 真实硬件模式（USB 连接 ODrive 后使用） |
-| `启动ODrive上位机-模拟演示.bat` | 模拟设备模式，无需任何硬件即可体验全部功能 |
-
-`dist/` 下有两种产物，按需取用：
-
-| 产物 | 启动速度 | 说明 |
+| 下载 | 启动速度 | 说明 |
 |---|---|---|
-| `dist/odrive-gui/odrive-gui.exe` | **约 2 秒** | 快速版（推荐）。免解包，整个 `odrive-gui` 文件夹一起拷贝 |
-| `dist/odrive-gui-portable.exe` | 约 10–20 秒 | 单文件便携版。方便发给别人，但每次运行都要解压约 27 MB |
+| **`odrive-gui-windows-x64.zip`** | **约 2 秒** | **推荐**。解压后双击启动脚本即用 |
+| `odrive-gui-portable.exe` | 约 10–20 秒 | 单文件便携版，方便随身携带，但每次运行都要解包约 27 MB |
+
+**使用步骤**（以推荐的 zip 为例）：
+
+1. 下载并**完整解压**（不要只取出 bat 文件）
+2. 双击其中一个启动脚本：
+   - `启动-模拟演示.bat` — 无需任何硬件，内置模拟器体验全部功能
+   - `启动-真实硬件.bat` — USB 连接 ODrive 后使用
+3. 约 2 秒后浏览器自动打开控制界面
 
 命令行参数：`odrive-gui.exe [--mock] [--port 8080] [--no-browser]`
 
@@ -57,24 +62,19 @@ git clone https://github.com/whatThelp/Odrive-tool.git
 > - 8000 端口被占用时程序自动顺延到下一个可用端口，并在窗口中提示实际地址。
 > - **关闭控制台窗口即退出程序**；启动脚本每次会先清理残留实例。
 
-其他系统的 Release 产物命名：
-
-| 系统 | 文件 |
-|---|---|
-| Windows (x86_64) | `odrive-gui.exe` |
-| Linux (x86_64 / ARM64) | `odrive-gui` |
-| macOS (Apple Silicon / Intel) | `odrive-gui.dmg` |
-
-打包命令（维护者）：
+**自行构建**（仓库不包含二进制产物）：
 
 ```bash
-python scripts/build_release.py          # 快速版 (onedir)
+python scripts/build_release.py           # 快速版 (onedir)，产物在 dist/odrive-gui/
 python scripts/build_release.py --onefile # 单文件便携版
 python scripts/build_release.py --both    # 两者都构建
 ```
 
 基于 PyInstaller，前端为免构建 ESM，无需 Node 即可打包；venv 中装有
-odrive/pyserial 时自动打入真实硬件支持。
+odrive/pyserial 时自动打入真实硬件支持。构建完成后，仓库根目录的
+`启动ODrive上位机.bat` / `启动ODrive上位机-模拟演示.bat` 会自动找到 `dist/` 下的程序。
+
+目前仅提供 Windows x64 预编译产物；Linux / macOS 请按上述命令自行构建。
 
 ### 方式二：开发模式（开发者）
 
@@ -240,7 +240,7 @@ help                                            查看用法
 | 现象 | 原因与处理 |
 |---|---|
 | 双击后浏览器显示"无法访问此网站" | 服务还没起好。程序会等就绪后自动开浏览器，**请勿重复双击**；首次运行被 Defender 扫描可能多等 30 秒 |
-| 程序启动很慢 | 用 `dist/odrive-gui/odrive-gui.exe`（约 2 秒），单文件便携版每次要解包 10–20 秒 |
+| 程序启动很慢 | 用 zip 版（解压即用，约 2 秒）；单文件便携版每次要解包 10–20 秒 |
 | 端口被占用 | 程序自动顺延到下一个可用端口，看控制台窗口提示的实际地址 |
 | 扫描不到设备 | 确认已装 `odrive` 库与 USB 驱动；检查线缆与供电；UART 模式确认波特率与 ASCII 协议 |
 | 无法进入闭环 | 该轴未校准（仪表盘会高亮提示），先跑一次校准向导 |
