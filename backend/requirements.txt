@@ -1,0 +1,4 @@
+# ODrive GUI 后端核心依赖 (Core backend dependencies)
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.5

@@ -1,0 +1,15 @@
+# 默认：仓库内统一存 LF，检出时按平台处理
+* text=auto eol=lf
+
+# Windows 批处理必须 CRLF，否则双击可能无反应
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Shell 脚本必须 LF，否则 Linux/macOS 报 bad interpreter
+*.sh text eol=lf
+
+# 二进制/不做行尾转换
+*.png binary
+*.jpg binary
+*.ico binary
+*.exe binary

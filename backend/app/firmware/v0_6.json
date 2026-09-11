@@ -1,0 +1,153 @@
+{
+  "fw_series": "0.6.x",
+  "doc_base": "https://docs.odriverobotics.com/v/latest/",
+  "enums": {
+    "control_mode": [
+      {"value": 0, "label_zh": "电压控制", "label_en": "Voltage"},
+      {"value": 1, "label_zh": "扭矩控制", "label_en": "Torque"},
+      {"value": 2, "label_zh": "速度控制", "label_en": "Velocity"},
+      {"value": 3, "label_zh": "位置控制", "label_en": "Position"}
+    ],
+    "input_mode": [
+      {"value": 0, "label_zh": "失效", "label_en": "Inactive"},
+      {"value": 1, "label_zh": "直通", "label_en": "Passthrough"},
+      {"value": 2, "label_zh": "速度斜坡", "label_en": "Vel Ramp"},
+      {"value": 3, "label_zh": "位置滤波", "label_en": "Pos Filter"},
+      {"value": 5, "label_zh": "梯形轨迹", "label_en": "Trap Traj"},
+      {"value": 6, "label_zh": "扭矩斜坡", "label_en": "Torque Ramp"}
+    ],
+    "motor_type": [
+      {"value": 0, "label_zh": "大电流电机", "label_en": "High Current"},
+      {"value": 2, "label_zh": "云台电机", "label_en": "Gimbal"}
+    ]
+  },
+  "groups": [
+    {
+      "id": "motor",
+      "label_zh": "电机参数",
+      "label_en": "Motor",
+      "scope": "axis",
+      "params": [
+        {"path": "axis{n}.config.motor.pole_pairs", "type": "int", "min": 1, "max": 64, "unit": "", "label_zh": "极对数", "label_en": "Pole Pairs", "help_zh": "电机磁极对数 = 磁极数 / 2。必须与实际电机一致。", "doc": "hardware/motor-guide.html"},
+        {"path": "axis{n}.config.motor.motor_type", "type": "enum", "enum": "motor_type", "label_zh": "电机类型", "label_en": "Motor Type", "help_zh": "大电流电机适用于绝大多数无刷电机。", "doc": "hardware/motor-guide.html"},
+        {"path": "axis{n}.config.motor.phase_resistance", "type": "float", "min": 0, "max": 10, "unit": "Ω", "label_zh": "相电阻", "label_en": "Phase Resistance", "help_zh": "通常由电机校准自动测量。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "axis{n}.config.motor.phase_inductance", "type": "float", "min": 0, "max": 0.1, "unit": "H", "label_zh": "相电感", "label_en": "Phase Inductance", "help_zh": "通常由电机校准自动测量。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "axis{n}.config.motor.torque_constant", "type": "float", "min": 0.0001, "max": 10, "unit": "N·m/A", "label_zh": "扭矩常数", "label_en": "Torque Constant", "help_zh": "扭矩常数 ≈ 8.27 / KV。", "doc": "hardware/motor-guide.html"},
+        {"path": "axis{n}.config.motor.calibration_current", "type": "float", "min": 0, "max": 60, "unit": "A", "label_zh": "校准电流", "label_en": "Calibration Current", "help_zh": "电机参数辨识时注入的电流。", "doc": "guides/getting-started.html"},
+        {"path": "axis{n}.config.motor.resistance_calib_max_voltage", "type": "float", "min": 0.1, "max": 24, "unit": "V", "label_zh": "校准最大电压", "label_en": "Calib Max Voltage", "help_zh": "电阻测量允许的最大电压。", "doc": "guides/getting-started.html"}
+      ]
+    },
+    {
+      "id": "limits",
+      "label_zh": "电流与速度限制",
+      "label_en": "Current & Velocity Limits",
+      "scope": "axis",
+      "params": [
+        {"path": "axis{n}.config.motor.current_soft_max", "type": "float", "min": 0, "max": 120, "unit": "A", "label_zh": "电流软限制", "label_en": "Current Soft Max", "danger": true, "help_zh": "正常运行的相电流上限。硬件峰值 120A/电机，连续电流取决于散热。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "axis{n}.config.motor.current_hard_max", "type": "float", "min": 0, "max": 120, "unit": "A", "label_zh": "电流硬限制", "label_en": "Current Hard Max", "danger": true, "help_zh": "瞬时超过该值立即报错停机。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "axis{n}.controller.config.vel_limit", "type": "float", "min": 0, "max": 200, "unit": "turns/s", "label_zh": "速度限制", "label_en": "Velocity Limit", "danger": true, "help_zh": "最大转速。首次调试建议 ≤ 10 turns/s。", "doc": "guides/getting-started.html"},
+        {"path": "axis{n}.controller.config.vel_limit_tolerance", "type": "float", "min": 1, "max": 5, "unit": "×", "label_zh": "超速容差", "label_en": "Vel Limit Tolerance", "help_zh": "实际速度超过 vel_limit × 容差 时报错。", "doc": "fibre_types/com_odriverobotics_ODrive.html"}
+      ]
+    },
+    {
+      "id": "encoder",
+      "label_zh": "编码器配置",
+      "label_en": "Encoder",
+      "scope": "axis",
+      "params": [
+        {"path": "inc_encoder{n}.config.cpr", "type": "int", "min": 6, "max": 1000000, "unit": "counts/turn", "label_zh": "每转计数 CPR", "label_en": "CPR", "help_zh": "CPR = 线数(PPR) × 4。", "doc": "hardware/encoder-guide.html"},
+        {"path": "axis{n}.config.encoder_bandwidth", "type": "float", "min": 100, "max": 3000, "unit": "rad/s", "label_zh": "编码器带宽", "label_en": "Encoder Bandwidth", "help_zh": "编码器 PLL 带宽。", "doc": "hardware/encoder-guide.html"}
+      ]
+    },
+    {
+      "id": "vel_loop",
+      "label_zh": "速度环",
+      "label_en": "Velocity Loop",
+      "scope": "axis",
+      "params": [
+        {"path": "axis{n}.controller.config.vel_gain", "type": "float", "min": 0, "max": 10, "unit": "N·m/(turn/s)", "label_zh": "速度环增益", "label_en": "Vel Gain", "help_zh": "速度环比例增益。", "doc": "guides/tuning.html"},
+        {"path": "axis{n}.controller.config.vel_integrator_gain", "type": "float", "min": 0, "max": 20, "unit": "N·m/turn", "label_zh": "速度环积分增益", "label_en": "Vel Integrator Gain", "help_zh": "消除稳态误差。", "doc": "guides/tuning.html"},
+        {"path": "axis{n}.controller.config.vel_ramp_rate", "type": "float", "min": 0, "max": 1000, "unit": "turns/s²", "label_zh": "速度斜坡率", "label_en": "Vel Ramp Rate", "help_zh": "速度斜坡输入模式下的加速度限制。", "doc": "guides/tuning.html"},
+        {"path": "axis{n}.controller.config.inertia", "type": "float", "min": 0, "max": 1, "unit": "N·m/(turn/s²)", "label_zh": "负载惯量", "label_en": "Inertia", "help_zh": "前馈用等效惯量。", "doc": "guides/tuning.html"}
+      ]
+    },
+    {
+      "id": "pos_loop",
+      "label_zh": "位置环",
+      "label_en": "Position Loop",
+      "scope": "axis",
+      "params": [
+        {"path": "axis{n}.controller.config.pos_gain", "type": "float", "min": 0, "max": 500, "unit": "(turn/s)/turn", "label_zh": "位置环增益", "label_en": "Pos Gain", "help_zh": "位置环比例增益，默认 20。", "doc": "guides/tuning.html"},
+        {"path": "axis{n}.controller.config.input_filter_bandwidth", "type": "float", "min": 0.1, "max": 100, "unit": "Hz", "label_zh": "输入滤波带宽", "label_en": "Input Filter BW", "help_zh": "位置滤波输入模式的滤波带宽。", "doc": "guides/tuning.html"},
+        {"path": "axis{n}.controller.config.circular_setpoints", "type": "bool", "label_zh": "循环位置模式", "label_en": "Circular Setpoints", "help_zh": "位置在 [0,1) 圈内循环。", "doc": "guides/tuning.html"}
+      ]
+    },
+    {
+      "id": "control",
+      "label_zh": "控制模式",
+      "label_en": "Control Mode",
+      "scope": "axis",
+      "params": [
+        {"path": "axis{n}.controller.config.control_mode", "type": "enum", "enum": "control_mode", "label_zh": "控制模式", "label_en": "Control Mode", "help_zh": "位置 / 速度 / 扭矩控制。", "doc": "guides/getting-started.html"},
+        {"path": "axis{n}.controller.config.input_mode", "type": "enum", "enum": "input_mode", "label_zh": "输入模式", "label_en": "Input Mode", "help_zh": "设定值的前处理方式。", "doc": "guides/getting-started.html"},
+        {"path": "axis{n}.config.startup_closed_loop_control", "type": "bool", "label_zh": "上电进入闭环", "label_en": "Startup Closed Loop", "danger": true, "help_zh": "上电自动进入闭环控制，启用前请确保负载安全！", "doc": "guides/getting-started.html"},
+        {"path": "axis{n}.config.enable_watchdog", "type": "bool", "label_zh": "启用看门狗", "label_en": "Enable Watchdog", "help_zh": "超时未收到指令自动停机。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "axis{n}.config.watchdog_timeout", "type": "float", "min": 0, "max": 100, "unit": "s", "label_zh": "看门狗超时", "label_en": "Watchdog Timeout", "help_zh": "看门狗超时时间。", "doc": "fibre_types/com_odriverobotics_ODrive.html"}
+      ]
+    },
+    {
+      "id": "power",
+      "label_zh": "电源与保护",
+      "label_en": "Power & Protection",
+      "scope": "device",
+      "params": [
+        {"path": "config.dc_bus_overvoltage_trip_level", "type": "float", "min": 10, "max": 56, "unit": "V", "label_zh": "过压保护阈值", "label_en": "Overvoltage Trip", "danger": true, "help_zh": "母线电压超过该值立即停机。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "config.dc_bus_undervoltage_trip_level", "type": "float", "min": 6, "max": 56, "unit": "V", "label_zh": "欠压保护阈值", "label_en": "Undervoltage Trip", "help_zh": "低于该值停机，电池供电时建议设为安全放电下限。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "config.dc_max_positive_current", "type": "float", "min": 0, "max": 120, "unit": "A", "label_zh": "母线最大正向电流", "label_en": "DC Max Positive Current", "help_zh": "从电源汲取的最大电流。", "doc": "fibre_types/com_odriverobotics_ODrive.html"},
+        {"path": "config.dc_max_negative_current", "type": "float", "min": -120, "max": 0, "unit": "A", "label_zh": "母线最大反向电流", "label_en": "DC Max Negative Current", "danger": true, "help_zh": "允许回灌电源的最大电流（负值）。", "doc": "fibre_types/com_odriverobotics_ODrive.html"}
+      ]
+    },
+    {
+      "id": "brake",
+      "label_zh": "制动电阻",
+      "label_en": "Brake Resistor",
+      "scope": "device",
+      "params": [
+        {"path": "config.brake_resistor0.enable", "type": "bool", "label_zh": "启用制动电阻", "label_en": "Enable Brake Resistor", "help_zh": "启用前请确认制动电阻已正确连接！需保存并重启生效。", "doc": "guides/getting-started.html"},
+        {"path": "config.brake_resistor0.resistance", "type": "float", "min": 0, "max": 100, "unit": "Ω", "label_zh": "制动电阻阻值", "label_en": "Brake Resistance", "help_zh": "所接制动电阻的实际阻值。", "doc": "guides/getting-started.html"}
+      ]
+    },
+    {
+      "id": "comm",
+      "label_zh": "通信接口",
+      "label_en": "Communication",
+      "scope": "device",
+      "params": [
+        {"path": "config.enable_uart_a", "type": "bool", "label_zh": "启用 UART", "label_en": "Enable UART A", "help_zh": "GPIO1/2 作为 UART 使用。", "doc": "manual/protocol.html"},
+        {"path": "config.uart_a_baudrate", "type": "int", "min": 9600, "max": 921600, "unit": "bps", "label_zh": "UART 波特率", "label_en": "UART Baudrate", "help_zh": "默认 115200。", "doc": "manual/protocol.html"},
+        {"path": "can.config.baud_rate", "type": "int", "min": 125000, "max": 1000000, "unit": "bps", "label_zh": "CAN 波特率", "label_en": "CAN Baud Rate", "help_zh": "默认 250000，总线上所有节点必须一致。", "doc": "manual/can-protocol.html"},
+        {"path": "axis{n}.config.can.node_id", "type": "int", "min": 0, "max": 63, "unit": "", "label_zh": "CAN 节点 ID", "label_en": "CAN Node ID", "help_zh": "该轴的 CAN 节点地址。", "doc": "manual/can-protocol.html"}
+      ]
+    }
+  ],
+  "telemetry_paths": [
+    {"path": "vbus_voltage", "label_zh": "母线电压", "label_en": "Bus Voltage", "unit": "V"},
+    {"path": "ibus", "label_zh": "母线电流", "label_en": "Bus Current", "unit": "A"},
+    {"path": "axis{n}.pos_estimate", "label_zh": "位置估计", "label_en": "Position", "unit": "turns"},
+    {"path": "axis{n}.vel_estimate", "label_zh": "速度估计", "label_en": "Velocity", "unit": "turns/s"},
+    {"path": "axis{n}.motor.foc.Iq_measured", "label_zh": "q轴电流", "label_en": "Iq Measured", "unit": "A"},
+    {"path": "axis{n}.motor.foc.Iq_setpoint", "label_zh": "q轴电流设定", "label_en": "Iq Setpoint", "unit": "A"},
+    {"path": "axis{n}.controller.pos_setpoint", "label_zh": "位置设定", "label_en": "Pos Setpoint", "unit": "turns"},
+    {"path": "axis{n}.controller.vel_setpoint", "label_zh": "速度设定", "label_en": "Vel Setpoint", "unit": "turns/s"},
+    {"path": "axis{n}.motor.fet_thermistor.temperature", "label_zh": "MOSFET 温度", "label_en": "FET Temp", "unit": "°C"},
+    {"path": "axis{n}.motor.motor_thermistor.temperature", "label_zh": "电机温度", "label_en": "Motor Temp", "unit": "°C"},
+    {"path": "axis{n}.current_state", "label_zh": "轴状态", "label_en": "Axis State", "unit": ""},
+    {"path": "axis{n}.error", "label_zh": "轴错误", "label_en": "Axis Error", "unit": ""}
+  ],
+  "status_paths": [
+    {"path": "axis{n}.motor.is_calibrated", "label_en": "Motor Calibrated"},
+    {"path": "axis{n}.encoder.is_ready", "label_en": "Encoder Ready"},
+    {"path": "axis{n}.controller.config.control_mode", "label_en": "Control Mode"},
+    {"path": "axis{n}.controller.config.input_mode", "label_en": "Input Mode"}
+  ]
+}

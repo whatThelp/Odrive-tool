@@ -1,0 +1,11 @@
+# 真实硬件支持 (Real hardware support) — 仅在连接真实 ODrive 时需要
+# 模拟器模式 (mock mode) 不需要安装本文件中的任何依赖。
+
+# USB (native protocol, 推荐 / recommended)
+odrive>=0.5.4,<0.7
+
+# UART (ASCII protocol)
+pyserial>=3.5
+
+# CAN (CANSimple protocol, 功能受限 / limited feature set)
+python-can>=4.3

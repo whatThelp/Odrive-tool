@@ -1,0 +1,24 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# 构建产物 Build artifacts（体积大，请用 scripts/build_release.py 自行构建）
+dist/
+build/
+*.spec
+
+# 前端依赖 Frontend deps（vendor/ 为刻意提交的免构建依赖，不要忽略）
+node_modules/
+frontend/node_modules/
+
+# 运行时数据 Runtime data（预设 / 错误日志 / 记录 CSV）
+data/
+
+# 编辑器与系统 Editor & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
